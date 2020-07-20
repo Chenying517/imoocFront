@@ -54,7 +54,7 @@
                       </div>
                     </div>
                   </validation-provider>
-                  <validation-provider name='code' rules='required|length:4' v-slot="{errors}">
+                  <validation-provider name='code' ref="codefield" rules='required|length:4' v-slot="{errors}">
 
                     <div class="layui-form-item">
                       <div class="layui-row">
@@ -138,6 +138,7 @@ export default {
     }
   },
   mounted () {
+    window.vue = this
     let sid = ''
     if (localStorage.getItem('sid')) {
       sid = localStorage.getItem('sid')
@@ -173,7 +174,23 @@ export default {
         sid: this.$store.state.sid
       }).then((res) => {
         if (res.code === 200) {
+          this.username = ''
+          this.password = ''
+          this.code = ''
+          requestAnimationFrame(() => {
+            this.$ref.observer.reset()
+          })
           console.log(res)
+        } else if (res.code === 401) {
+          this.$refs.codefield.setErrors([res.msg])
+          console.log('验证码错误')
+        }
+      }).catch((err) => {
+        const data = err.response.data
+        if (data.code === 500) {
+          this.$alert('用户名或密码错误校验失败，请检查')
+        } else {
+          this.$alert('服务器错误')
         }
       })
     }

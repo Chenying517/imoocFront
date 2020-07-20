@@ -5,7 +5,7 @@ import axios from '@/utils/request'
  * params () option 用户的唯一凭证
  */
 const getCode = (option) => {
-  return axios.get('/getCaptcha', {
+  return axios.get('./public/getCaptcha', {
     params: {
       sid: option
     }
@@ -27,7 +27,7 @@ const forget = (option) => {
  * params () option 登录请求用户信息
  */
 const login = (option) => {
-  return axios.post('./login', {
+  return axios.post('./login/login', {
     ...option
   })
 }
