@@ -178,7 +178,7 @@ export default {
           this.password = ''
           this.code = ''
           requestAnimationFrame(() => {
-            this.$ref.observer.reset()
+            this.$refs.observer.reset()
           })
           console.log(res)
         } else if (res.code === 401) {

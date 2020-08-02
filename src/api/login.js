@@ -33,10 +33,10 @@ const login = (option) => {
 }
 /**
  * 注册
- * params () option 登录请求用户信息
+ * params () option 登录请求用户注册信息
  */
 const register = (option) => {
-  return axios.post('./register', {
+  return axios.post('./login/register', {
     ...option
   })
 }

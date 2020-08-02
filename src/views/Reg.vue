@@ -54,7 +54,7 @@
                   </validation-provider>
                   <validation-provider
                     name="password"
-                    rules="required|min:6|max:16|confirmed:password"
+                    rules="required|min:6|max:16|confirmed:cofirmation"
                     v-slot="{errors}"
                   >
                     <div class="layui-form-item">
@@ -80,7 +80,7 @@
                   </validation-provider>
                   <validation-provider
                     name="password"
-                    rules="required|min:6|max:16|confirmed:password"
+                    vid="cofirmation"
                     v-slot="{errors}"
                   >
                     <div class="layui-form-item">
@@ -176,7 +176,19 @@ export default {
     this._getCode()
   },
   methods: {
+    _getCode () {
+      let sid = this.$store.state.sid
+      getCode(sid)
+        .then(res => {
+          this.svg = res.data
+        })
+        .catch(error => {
+          console.log('错误' + error)
+        })
+    },
     async submit () {
+      var that = this
+
       const isValid = await this.$refs.observe.validate()
       if (!isValid) {
         return
@@ -185,24 +197,39 @@ export default {
         username: this.username,
         name: this.name,
         password: this.password,
-        repassword: this.repassword,
         code: this.code,
-        svg: this.svg,
         sid: this.$store.state.sid
       }).then((res) => {
-        if (res === 200) {
-          console.log(res)
-        }
-      })
-    },
-    _getCode () {
-      getCode().then((res) => {
-        console.log(res)
         if (res.code === 200) {
-          this.svg = res.data
+          // 校验成功清空用户信息
+          that.username = ''
+          that.name = ''
+          that.password = ''
+          that.repassword = ''
+          that.code = ''
+          requestAnimationFrame(() => {
+            that.$refs.observe.reset()
+          })
+          that.$alert('注册成功')
+          console.log(res)
+          // 跳转到登录页面
+          setTimeout(() => {
+            this.$router.push('/login')
+          }, 1000)
+        } else {
+          // 可能会出现的错误 username已注册 code不对 name已存在
+          that.$refs.observe.setErrors(res.msg)
         }
       })
     }
+    // _getCode () {
+    //   getCode().then((res) => {
+    //     console.log(res)
+    //     if (res.code === 200) {
+    //       this.svg = res.data
+    //     }
+    //   })
+    // }
   }
 }
 </script>
